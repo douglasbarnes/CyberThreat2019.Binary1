@@ -1,5 +1,5 @@
 # CyberThreat.Binary1
-1. Find call to libc time in binary
+1. Look at libc calls in binary, specifically rand() and srand()
 ```
         00011465 83 ec 0c        SUB        ESP,0xc
         00011468 6a 00           PUSH       0x0
@@ -11,7 +11,7 @@
         00011476 e8 d5 f0        CALL       srand  
                  ff ff
 ```
-Output of time() goes to A register, and libc srand() takes seed arg from the top of the stack, so we can see that the seed is just the output of time(). (The argument put on the stack before time is where to store the result, by passing 0x0(NULL in C), we dont store it in memory). You could also come to the same conclusion by running the program twice in a second
+Output of libc time() goes to A register, and libc srand() takes seed arg from the top of the stack, so we can see that the seed is just the output of time(). (The argument put on the stack before time is where to store the result, by passing 0x0(NULL in C), we dont store it in memory). You could also come to the same conclusion by running the program twice in a second
 2. Look for calls to libc rand()
 There is only one reference to rand(), which is at imagebase+0x788. This means that there is one function that picks random numbers to be used. It's likely that something could happen later on to change the number, but in this case it doesnt.
 ```
